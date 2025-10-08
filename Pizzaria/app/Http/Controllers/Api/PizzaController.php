@@ -31,7 +31,7 @@ class PizzaController extends Controller
         ], 200);
     }
 
-    public function store(PizzaRequest $request) : JsonResponse
+    public function store(PizzaRequest $request) : JsonResponse/*  */
     {
         DB::beginTransaction();
 

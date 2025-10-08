@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use App\Models\Pedido;
 use App\Models\User;
@@ -20,7 +19,6 @@ class PedidoSeeder extends Seeder
         $pizza = Pizza::first();
 
         if (!$user || !$pizza) {
-            $this->call([UserSeeder::class, PizzaSeeder::class]);
             $user = User::first();
             $pizza = Pizza::first();
         }
