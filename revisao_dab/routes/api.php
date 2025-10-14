@@ -19,7 +19,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
 
     Route::prefix('user')->group(function() {
-        Route::get('/', [UserController::class, 'index']);
+        Route::get('/user', [UserController::class, 'index']);
     });
 
     Route::prefix('estado')->group(function () {
@@ -31,22 +31,22 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     Route::prefix('endereco')->group(function () {
-        Route::post('/', [EnderecoController::class, 'create']);
+        Route::post('/endereco', [EnderecoController::class, 'create']);
     });
 
     Route::prefix('condominio')->group(function() {
-        Route::post('/', [CondominioController::class, 'create']);
-        Route::get('/', [CondominioController::class, 'list']);
+        Route::post('/condominio', [CondominioController::class, 'create']);
+        Route::get('/condominio', [CondominioController::class, 'list']);
         Route::get('/buscar', [CondominioController::class, 'search']);
 
         Route::prefix('bloco')->group(function(){
-            Route::post('/', [BlocoController::class, 'create']);
-            Route::get('/', [BlocoController::class, 'list']);
+            Route::post('/bloco', [BlocoController::class, 'create']);
+            Route::get('/bloco', [BlocoController::class, 'list']);
 
             Route::prefix('apartamento')->group(function(){
-                Route::post('/', [ApartamentoController::class, 'create']);
-                Route::get('/', [ApartamentoController::class, 'list']);
-                Route::put('/atualizar/{uuid}', [ApartamentoController::class, 'update']);
+                Route::post('/apartamento', [ApartamentoController::class, 'create']);
+                Route::get('/apartamento', [ApartamentoController::class, 'list']);
+                Route::put('/apartamento/atualizar/{uuid}', [ApartamentoController::class, 'update']);
             });
         });
     });
