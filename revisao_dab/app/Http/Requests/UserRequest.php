@@ -22,6 +22,16 @@ class UserRequest extends FormRequest
      */
     public function rules(): array
     {
+        $passwordRule = Password::min(8)
+            ->letters()
+            ->mixedCase()
+            ->numbers()
+            ->symbols();
+
+        if (!app()->environment('testing')) {
+            $passwordRule = $passwordRule->uncompromised();
+        }
+
         return [
             'name' => 'required|string|max:50',
             'cpf' => 'required|string|min:14|max:14',
@@ -31,12 +41,7 @@ class UserRequest extends FormRequest
                 'required',
                 'string',
                 'confirmed',
-                Password::min(8)
-                    ->letters()
-                    ->mixedCase()
-                    ->numbers()
-                    ->symbols()
-                    ->uncompromised(),
+                $passwordRule,
             ],
             'password_confirmation' => 'required|same:password'
         ];

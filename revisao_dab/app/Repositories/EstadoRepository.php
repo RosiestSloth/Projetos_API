@@ -10,5 +10,15 @@ class EstadoRepository
     {
         return Estado::all();
     }
+
+    public function findBySigla(string $uf)
+    {
+        return Estado::whereRaw('UPPER(uf) = ?', [strtoupper($uf)])->first();
+    }
+
+    public function findByNomeLike(string $nome)
+    {
+        return Estado::where('nome', 'LIKE', "%$nome%")->get();
+    }
 }
 

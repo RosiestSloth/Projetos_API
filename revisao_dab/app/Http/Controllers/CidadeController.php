@@ -14,9 +14,9 @@ class CidadeController extends Controller
         $this->service = $service;
     }
 
-    public function selectPorEstado($codigo_uf)
+    public function selectPorEstado(Request $request, $codigo_uf)
     {
-        $cidadePorEstado = $this->service->selectPorEstado($codigo_uf);
+        $cidadePorEstado = $this->service->selectPorEstado($request, $codigo_uf);
 
         return ['status' => true, "cidades" => $cidadePorEstado];
     }

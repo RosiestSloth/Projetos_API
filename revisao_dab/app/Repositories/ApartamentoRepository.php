@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Models\Apartamento;
+use Illuminate\Support\Facades\Auth;
 
 class ApartamentoRepository
 {
@@ -11,25 +12,38 @@ class ApartamentoRepository
         return Apartamento::find($id);
     }
 
+    public function findWithRelations($id)
+    {
+        return $this->baseQuery()->where('id', $id)->first();
+    }
+
     public function create($data)
     {
+        $proprietario = $data['proprietario'] ?? Auth::id();
+        $morador = $data['morador'] ?? null;
+
         return Apartamento::create([
             'numero' => $data['numero'],
             'bloco_id' => $data['bloco'],
-            'user_morador' => $data['morador'],
-            'user_proprietario' => $data['proprietario']
+            'user_morador' => $morador,
+            'user_proprietario' => $proprietario
         ]);
 
     }
 
-    public function list()
+    public function listByOwner($ownerId)
     {
-        $query = $this->query();
+        $query = $this->baseQuery()->where('user_proprietario', $ownerId);
 
         return $query->paginate(10);
     }
 
-    private function query()
+    public function listAll()
+    {
+        return $this->baseQuery()->paginate(10);
+    }
+
+    private function baseQuery()
     {
         return Apartamento::with(
             'morador',
@@ -39,9 +53,30 @@ class ApartamentoRepository
         );
     }
 
-    public function update()
+    public function update($id, $data)
     {
-        //
+        $apartamento = $this->find($id);
+        if (!$apartamento) {
+            abort(404, 'Apartamento não encontrado.');
+        }
+
+        $payload = [];
+        if (isset($data['numero'])) $payload['numero'] = $data['numero'];
+        if (isset($data['bloco'])) $payload['bloco_id'] = $data['bloco'];
+        if (array_key_exists('morador', $data)) $payload['user_morador'] = $data['morador'];
+
+        $apartamento->update($payload);
+
+        return $this->findWithRelations($apartamento->id);
+    }
+
+    public function delete($id)
+    {
+        $apartamento = $this->find($id);
+        if (!$apartamento) {
+            abort(404, 'Apartamento não encontrado.');
+        }
+        return $apartamento->delete();
     }
 }
 

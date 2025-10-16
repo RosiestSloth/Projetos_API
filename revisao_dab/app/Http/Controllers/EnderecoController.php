@@ -47,7 +47,8 @@ class EnderecoController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $endereco = $this->service->show($id);
+        return ['status' => true, 'message' => 'Endereço encontrado com sucesso!', 'endereco' => $endereco];
     }
 
     /**

@@ -13,9 +13,13 @@ class CidadeService
         $this->repository = $repository;
     }
 
-    public function selectPorEstado($codigo_uf)
+    public function selectPorEstado($request, $codigo_uf)
     {
-        return $this->repository->selectPorEstado($codigo_uf);
+        $filtros = [
+            'nome' => $request->query('nome'),
+            'codigo_municipio' => $request->query('codigo_municipio'),
+        ];
+        return $this->repository->selectPorEstado($codigo_uf, $filtros);
     }
 }
 

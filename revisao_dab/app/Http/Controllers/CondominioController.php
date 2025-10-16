@@ -40,9 +40,10 @@ class CondominioController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function show(string $id)
     {
-        //
+        $condominio = $this->service->show($id);
+        return ['status' => true, 'message' => Geral::CONDOMINIO_ENCONTRADO, 'condominio' => $condominio];
     }
 
     /**
@@ -50,7 +51,8 @@ class CondominioController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+    $condominio = $this->service->update($id, $request->all());
+    return ['status' => true, 'message' => 'Condomínio atualizado com sucesso!', 'condominio' => $condominio];
     }
 
     /**
@@ -58,6 +60,7 @@ class CondominioController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+    $this->service->delete($id);
+    return ['status' => true, 'message' => 'Condomínio deletado com sucesso!'];
     }
 }

@@ -13,9 +13,17 @@ class EnderecoRepository
             'logradouro' => $data['logradouro'],
             'complemento' => $data['complemento'],
             'bairro' => $data['bairro'],
-            'cidade_id' => $data['cidade']
+            'cidade_id' => $data['cidade_id']
         ]);
 
+    }
+
+    public function findById($id)
+    {
+        return Endereco::with('cidade.estado')
+            ->where('id', $id)
+            ->whereNull('deleted_at')
+            ->firstOrFail();
     }
 }
 

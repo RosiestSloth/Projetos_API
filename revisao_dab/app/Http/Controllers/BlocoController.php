@@ -68,7 +68,8 @@ class BlocoController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+    $bloco = $this->service->update($id, $request->all());
+    return ['status' => true, 'message' => 'Bloco atualizado com sucesso!', 'bloco' => $bloco];
     }
 
     /**
@@ -76,6 +77,7 @@ class BlocoController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+    $this->service->delete($id);
+    return ['status' => true, 'message' => 'Bloco deletado com sucesso!'];
     }
 }

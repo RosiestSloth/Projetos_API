@@ -19,9 +19,17 @@ class ApartamentoRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        $isProprietario = $this->rule->isProprietario();
+        $user = $this->user();
+        if (!$user) return false;
 
-        return $isProprietario;
+        $adminId = \App\Models\TipoUsuario::where('tipo', 'Admin')->value('id') ?? 1;
+        $propId = \App\Models\TipoUsuario::where('tipo', 'Proprietário')->value('id') ?? 2;
+
+        $tipoNome = optional($user->tipo)->tipo;
+        return ((int)$user->tipo_usuario_id === (int)$propId)
+            || ((int)$user->tipo_usuario_id === (int)$adminId)
+            || ($tipoNome === 'Proprietário')
+            || ($tipoNome === 'Admin');
     }
 
     /**
@@ -33,7 +41,8 @@ class ApartamentoRequest extends FormRequest
     {
         return [
             'numero' => 'required|string',
-            'bloco' => 'required|string'
+            // expects bloco id
+            'bloco' => 'required|integer|exists:blocos,id'
         ];
     }
 
@@ -41,7 +50,9 @@ class ApartamentoRequest extends FormRequest
     {
         return [
             'required' => 'O campo :attribute é obrigatório.',
-            'string' => 'O campo :attribute deve ser uma string.'
+            'string' => 'O campo :attribute deve ser uma string.',
+            'integer' => 'O campo :attribute deve ser um inteiro.',
+            'exists' => 'O :attribute informado não existe.'
         ];
     }
 }

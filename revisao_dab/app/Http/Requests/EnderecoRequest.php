@@ -8,7 +8,6 @@ use Illuminate\Foundation\Http\FormRequest;
 class EnderecoRequest extends FormRequest
 {
     protected $rule;
-
     public function __construct(UsuarioRule $rule) {
         $this->rule = $rule;
     }
@@ -18,9 +17,17 @@ class EnderecoRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        $isProprietario = $this->rule->isProprietario();
+        $user = $this->user();
+        if (!$user) return false;
 
-        return $isProprietario;
+        $adminId = \App\Models\TipoUsuario::where('tipo', 'Admin')->value('id') ?? 1;
+        $propId = \App\Models\TipoUsuario::where('tipo', 'Proprietário')->value('id') ?? 2;
+
+        $tipoNome = optional($user->tipo)->tipo;
+        return ((int)$user->tipo_usuario_id === (int)$propId)
+            || ((int)$user->tipo_usuario_id === (int)$adminId)
+            || ($tipoNome === 'Proprietário')
+            || ($tipoNome === 'Admin');
     }
 
     /**
@@ -34,7 +41,8 @@ class EnderecoRequest extends FormRequest
             'cep' => 'required|string|min:9|max:9',
             'logradouro' => 'required|string',
             'complemento' => 'required|string',
-            'bairro' => 'required|string'
+            'bairro' => 'required|string',
+            'cidade_id' => 'required|integer|exists:cidades,id'
         ];
     }
 

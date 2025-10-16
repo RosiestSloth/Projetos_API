@@ -16,6 +16,9 @@ class TipoUsuarioSeeder extends Seeder
     {
         $tipos = [
             [
+                'tipo' => 'Admin'
+            ],
+            [
                 'tipo' => 'Inquilino'
             ],
             [

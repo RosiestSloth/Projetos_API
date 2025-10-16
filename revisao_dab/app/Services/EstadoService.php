@@ -13,8 +13,20 @@ class EstadoService
         $this->repository = $repository;
     }
 
-    public function select()
+    public function select($request)
     {
+        $uf = $request->query('sigla');
+        $nome = $request->query('nome');
+
+        if ($uf) {
+            $estado = $this->repository->findBySigla($uf);
+            return $estado ? collect([$estado]) : collect();
+        }
+
+        if ($nome) {
+            return $this->repository->findByNomeLike($nome);
+        }
+
         return $this->repository->findAll();
     }
 }

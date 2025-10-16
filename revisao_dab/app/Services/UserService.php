@@ -24,9 +24,29 @@ class UserService
 
     public function me($request)
     {
-        $userID = $request->user()->uuid;
+        $userID = $request->user()->id;
 
         return $this->repository->findMe($userID);
+    }
+
+    public function list()
+    {
+        return $this->repository->list();
+    }
+
+    public function show($id)
+    {
+        return $this->repository->findById($id);
+    }
+
+    public function update($id, $data)
+    {
+        return $this->repository->update($id, $data);
+    }
+
+    public function delete($id)
+    {
+        return $this->repository->delete($id);
     }
 }
 

@@ -8,6 +8,7 @@ use App\Models\User;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
@@ -103,8 +104,24 @@ class UserController extends Controller
 
     public function destroy(User $user) : JsonResponse
     {
-        try {
+        // Require authenticated user
+        $authUser = Auth::user();
+        if (!$authUser) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Não autorizado.',
+            ], 401);
+        }
 
+        // Only admins (tipo_usuario_id == 1) can delete users
+        if (isset($authUser->tipo_usuario_id) && $authUser->tipo_usuario_id != 1) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Acesso negado. Somente administradores podem apagar usuários.',
+            ], 403);
+        }
+
+        try {
             $user->delete();
 
             return response()->json([

@@ -15,9 +15,9 @@ class EstadoController extends Controller
         $this->service = $service;
     }
 
-    public function select()
+    public function select(Request $request)
     {
-        $estados = $this->service->select();
+        $estados = $this->service->select($request);
 
         return ['status' => true, "estados" => $estados];
     }

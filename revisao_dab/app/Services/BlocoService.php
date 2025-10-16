@@ -31,9 +31,34 @@ class BlocoService
 
     }
 
-    public function list()
+    public function list($request)
     {
-        return $this->repository->list();
+        // Non-aborting admin check: allow non-admins to list their accessible records
+        $user = $request->user();
+        $adminId = \App\Models\TipoUsuario::where('tipo', 'Admin')->value('id') ?? 1;
+        $isAdmin = $user && (((int)$user->tipo_usuario_id === (int)$adminId) || (optional($user->tipo)->tipo === 'Admin'));
+        return $this->repository->list($isAdmin);
+    }
+
+    public function update($id, $data)
+    {
+        // Validate duplicate by name+condominio if provided
+        if (isset($data['bloco']) && isset($data['condominio'])) {
+            $exists = \App\Models\Bloco::where('bloco', $data['bloco'])
+                ->where('condominio_id', $data['condominio'])
+                ->where('id', '!=', $id)
+                ->whereNull('deleted_at')
+                ->exists();
+            if ($exists) {
+                abort(422, 'Já existe um bloco com esse nome neste condomínio.');
+            }
+        }
+        return $this->repository->update($id, $data);
+    }
+
+    public function delete($id)
+    {
+        return $this->repository->delete($id);
     }
 }
 

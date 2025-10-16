@@ -15,9 +15,9 @@ class CondominioRepository
         ]);
     }
 
-    public function list($userID)
+    public function list($userID, $isAdmin = false)
     {
-        $query = $this->query($userID);
+        $query = $isAdmin ? $this->queryAdmin() : $this->query($userID);
 
         return $query->paginate(10);
     }
@@ -31,6 +31,37 @@ class CondominioRepository
         return $query->paginate(10);
     }
 
+    public function findById($id)
+    {
+        return Condominio::with(
+                'user',
+                'user.tipo',
+                'endereco.cidade.estado',
+                'bloco.apartamento.morador',
+                'bloco.apartamento.proprietario'
+            )
+            ->where('id', $id)
+            ->whereNull('deleted_at')
+            ->firstOrFail();
+    }
+
+    public function update($id, $data)
+    {
+        $cond = Condominio::where('id', $id)->whereNull('deleted_at')->firstOrFail();
+        if (isset($data['condominio'])) $cond->condominio = $data['condominio'];
+        if (isset($data['endereco'])) $cond->endereco_id = $data['endereco'];
+        $cond->save();
+        return $this->findById($id);
+    }
+
+    public function delete($id)
+    {
+        $cond = Condominio::where('id', $id)->whereNull('deleted_at')->firstOrFail();
+        $cond->deleted_at = now()->toDateTimeString();
+        $cond->save();
+        return true;
+    }
+
     private function query($userID)
     {
         return Condominio::with(
@@ -41,6 +72,18 @@ class CondominioRepository
                 'bloco.apartamento.proprietario'
             )
             ->where('user_id', $userID)
+            ->whereNull('deleted_at');
+    }
+
+    private function queryAdmin()
+    {
+        return Condominio::with(
+                'user',
+                'user.tipo',
+                'endereco.cidade.estado',
+                'bloco.apartamento.morador',
+                'bloco.apartamento.proprietario'
+            )
             ->whereNull('deleted_at');
     }
 

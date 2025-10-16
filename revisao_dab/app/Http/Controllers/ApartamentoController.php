@@ -19,9 +19,10 @@ class ApartamentoController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $apartamentos = $this->service->list($request);
+        return ['status' => true, 'message' => Geral::APARTAMENTO_ENCONTRADO, 'apartamentos' => $apartamentos];
     }
 
     /**
@@ -43,9 +44,9 @@ class ApartamentoController extends Controller
      */
     public function list()
     {
-        $apartamento = $this->service->list();
-
-        return ['status' => true, 'message' => Geral::APARTAMENTO_ENCONTRADO, 'apartamento' => $apartamento];
+        // Mantido por compatibilidade com a rota existente
+        $apartamento = $this->service->list(request());
+        return ['status' => true, 'message' => Geral::APARTAMENTO_ENCONTRADO, 'apartamentos' => $apartamento];
     }
 
     /**
@@ -53,7 +54,8 @@ class ApartamentoController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $apartamento = $this->service->show(request(), $id);
+        return ['status' => true, 'message' => Geral::APARTAMENTO_ENCONTRADO, 'apartamento' => $apartamento];
     }
 
     /**
@@ -76,6 +78,7 @@ class ApartamentoController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $this->service->delete(request(), $id);
+        return ['status' => true, 'message' => 'Apartamento excluído com sucesso!'];
     }
 }
