@@ -33,12 +33,10 @@ class UserController extends Controller
 
     public function create(UserRequest $request)
     {
-        // Apenas ADMIN pode cadastrar qualquer usuário (Proprietário ou Inquilino)
-        (new UsuarioRule())->isAdmin();
-
+        // Registro público: UserRequest valida os campos. Não exigir ADMIN aqui.
         $user = $this->service->create($request);
 
-        return ['status' => true, 'message' => Geral::USUARIO_CADASTRADO, "usuario" => $user];
+        return ['status' => true, 'message' => Geral::USUARIO_CADASTRADO, 'usuario' => $user];
     }
 
     public function store(Request $request)
